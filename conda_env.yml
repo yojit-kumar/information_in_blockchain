@@ -1,0 +1,10 @@
+name: inf
+channels:
+  - defaults
+dependencies:
+  - python
+  - numpy
+  - simpy
+  - jupyterlab
+  - pandas
+  - matplotlib
