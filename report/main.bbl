@@ -1,0 +1,62 @@
+\begin{thebibliography}{10}
+
+\bibitem{deckerInformationPropagationBitcoin2013}
+C.~Decker and R.~Wattenhofer.
+\newblock Information propagation in the {{Bitcoin}} network.
+\newblock In {\em {{IEEE P2P}} 2013 {{Proceedings}}}, pages 1--10, Trento, Italy, Sept. 2013. IEEE.
+
+\bibitem{demersEpidemicAlgorithmsReplicated1987}
+A.~Demers, D.~Greene, C.~Hauser, W.~Irish, and J.~Larson.
+\newblock Epidemic algorithms for replicated database maintenance.
+\newblock In {\em Proceedings of the Sixth Annual {{ACM Symposium}} on {{Principles}} of Distributed Computing - {{PODC}} '87}, pages 1--12, Vancouver, British Columbia, Canada, 1987. ACM Press.
+
+\bibitem{eyalMajorityNotEnough2013}
+I.~Eyal and E.~G. Sirer.
+\newblock Majority is not {{Enough}}: {{Bitcoin Mining}} is {{Vulnerable}}, Nov. 2013.
+
+\bibitem{haeuplerAnalyzingNetworkCoding2010}
+B.~Haeupler.
+\newblock Analyzing {{Network Coding Gossip Made Easy}}, Oct. 2010.
+
+\bibitem{hoRandomLinearNetwork2006}
+T.~Ho, M.~Medard, R.~Koetter, D.~Karger, M.~Effros, J.~Shi, and B.~Leong.
+\newblock A {{Random Linear Network Coding Approach}} to {{Multicast}}.
+\newblock {\em IEEE Transactions on Information Theory}, 52(10):4413--4430, Oct. 2006.
+
+\bibitem{laiAcceleratingBlockTransaction2025}
+Y.~Lai, Y.~Liu, H.~Luo, G.~Sun, C.~Chi, and H.~Yu.
+\newblock Accelerating {{Block}} and {{Transaction Propagation}}: {{A Survey}} on {{Broadcast Protocols}} in {{Blockchain Networks}}.
+\newblock {\em IEEE Transactions on Network Science and Engineering}, pages 1--24, 2025.
+
+\bibitem{liScalableMultiLayerPBFT2021}
+W.~Li, C.~Feng, L.~Zhang, H.~Xu, B.~Cao, and M.~A. Imran.
+\newblock A {{Scalable Multi-Layer PBFT Consensus}} for {{Blockchain}}.
+\newblock {\em IEEE Transactions on Parallel and Distributed Systems}, 32(5):1146--1160, May 2021.
+
+\bibitem{liaoGraphAttentionNetworkbased2024}
+J.~Liao, J.~Wen, J.~Kang, C.~Yi, Y.~Zhang, Y.~Jiao, D.~Niyato, D.~I. Kim, and S.~Xie.
+\newblock Graph {{Attention Network-based Block Propagation}} with {{Optimal AoI}} and {{Reputation}} in {{Web}} 3.0, May 2024.
+
+\bibitem{linUnifiedBlockchainSemanticFramework2022}
+Y.~Lin, Z.~Gao, H.~Du, D.~Niyato, J.~Kang, R.~Deng, and X.~S. Shen.
+\newblock A {{Unified Blockchain-Semantic Framework}} for {{Wireless Edge Intelligence Enabled Web}} 3.0, Oct. 2022.
+
+\bibitem{maymounkovKademliaPeertoPeerInformation2002}
+P.~Maymounkov and D.~Mazi{\`e}res.
+\newblock Kademlia: {{A Peer-to-Peer Information System Based}} on the {{XOR Metric}}.
+\newblock In G.~Goos, J.~Hartmanis, J.~Van~Leeuwen, P.~Druschel, F.~Kaashoek, and A.~Rowstron, editors, {\em Peer-to-{{Peer Systems}}}, volume 2429, pages 53--65. Springer Berlin Heidelberg, Berlin, Heidelberg, 2002.
+
+\bibitem{nakamotoBitcoinPeertoPeerElectronic2008}
+S.~Nakamoto.
+\newblock Bitcoin: {{A Peer-to-Peer Electronic Cash System}}, 2008.
+
+\bibitem{nicolaouOptimump2pFastReliable2025}
+N.~Nicolaou, O.~Obi, A.~Rajasekaran, A.~Bergasov, A.~Bezobchuk, K.~M. Konwar, M.~Meier, S.~Paiva, H.~P. Singh, S.~S.~S. Vishwanath, and M.~Medard.
+\newblock {{OPTIMUMP2P}}: {{Fast}} and {{Reliable Gossiping}} in {{P2P Networks}}, Sept. 2025.
+
+\bibitem{rohrerKadcastStructuredApproach2019}
+E.~Rohrer and F.~Tschorsch.
+\newblock Kadcast: {{A Structured Approach}} to {{Broadcast}} in {{Blockchain Networks}}.
+\newblock In {\em Proceedings of the 1st {{ACM Conference}} on {{Advances}} in {{Financial Technologies}}}, pages 199--213, Zurich Switzerland, Oct. 2019. ACM.
+
+\end{thebibliography}
