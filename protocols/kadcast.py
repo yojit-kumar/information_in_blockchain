@@ -1,25 +1,3 @@
-"""
-kadcast.py — Kadcast broadcast protocol.
-
-Algorithm summary:
-  1. Source generates k*(1+f) FEC chunks (chunk_ids 0 to n_chunks-1).
-  2. Source sends all chunks to β peers per bucket across all 16 bucket levels.
-  3. Receiver accumulates chunks. On receiving a full set from one sender:
-       - Decodes (marks kd_decoded = True) if not already decoded.
-       - Records kd_forward_level = bucket_level(sender XOR receiver).
-       - Forwards all chunks to β peers in each sub-bucket (levels 0 to h-1).
-  4. Any chunks arriving after decoding are silently dropped.
-
-Reference: Rohrer & Tschorsch, "Kadcast: A Structured Broadcast Protocol
-for Blockchain Data Dissemination", 2019.
-
-Parameters (from benchmark.py config):
-  k       : number of chunks needed to decode
-  f       : FEC overhead fraction (0.15 → 15% redundancy)
-  beta    : number of peers selected per bucket for forwarding (3)
-  chunk_size_bytes: size of each FEC chunk in bytes
-"""
-
 import random
 from typing import Generator
 
@@ -28,7 +6,6 @@ from network import ID_BITS, _bucket_level
 
 
 def _n_chunks(k: int, f: float) -> int:
-    """Total number of FEC chunks generated: k*(1+f), rounded up."""
     return int(k * (1 + f))
 
 
@@ -40,7 +17,7 @@ def _send_all_chunks(
     chunk_size: int,
     ctx      : SimContext,
 ) -> None:
-    """Spawn send_message processes for all chunks from sender to receiver."""
+
     for chunk_id in range(n_chunks):
         msg = Message(
             msg_type   = 'SHARD',
@@ -63,11 +40,7 @@ def _forward(
     beta     : int,
     ctx      : SimContext,
 ) -> None:
-    """
-    Forward all chunks to β peers in each sub-bucket (levels 0 to h-1).
-    Peers are sampled without replacement from the bucket; if a bucket has
-    fewer than β peers, all peers in that bucket are used.
-    """
+
     rng_local = random.Random(ctx.rng.integers(0, 2**32).item())
     for level in range(h):
         bucket = ctx.kad_tables[node][level]
@@ -79,13 +52,7 @@ def _forward(
 
 
 def handle_message(msg: Message, ctx: SimContext) -> Generator:
-    """
-    Protocol handler called by the engine on message delivery.
 
-    Handles:
-      'PUBLISH' — source node initiates broadcast.
-      'SHARD'   — receiver accumulates chunks, decodes, and forwards.
-    """
     # Retrieve config stored in ctx by benchmark.py.
     k          = ctx.config['k']
     f          = ctx.config['f']

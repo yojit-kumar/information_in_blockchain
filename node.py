@@ -56,4 +56,4 @@ class NodeState:
     op_mesh_peers : List[int] = field(default_factory=list)
     op_ihave_sent : Set[int]  = field(default_factory=set)  # peers already sent IHAVE for this block
     op_is_done    : Set[int]  = field(default_factory=set)  # peers who sent IDONTWANT (already decoded)
-    op_forwarded : bool = False   # True once r=k/2 shards received and forwarding triggered
+    op_forwarded : bool = False   # True once r shards received and forwarding triggered

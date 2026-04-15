@@ -1,30 +1,3 @@
-"""
-kadrlnc.py — KadRLNC broadcast protocol.
-
-KadRLNC combines Kademlia's structured overlay with RLNC-style shard gossip
-and a push-pull IHAVE/IWANT exchange to avoid flooding.
-
-Algorithm summary:
-  1. Source sends IHAVE(block_id) to one peer per bucket across all 16 levels.
-  2. Peer receiving IHAVE:
-       - Not decoded: replies IWANT.
-       - Already decoded: replies IDONTWANT → added to sender's rl_no_send.
-  3. On IWANT: sender transmits k individual SHARD messages to requester.
-  4. Receiver counts incoming shards. All shards assumed innovative (unique).
-     Shards dropped if node already has k or is decoded.
-  5. On receiving k shards: apply 5ms simulated RLNC decode+recode delay,
-     mark decoded, record delivery, become publisher.
-  6. As publisher: send IHAVE to one peer per bucket simultaneously,
-     skipping peers in rl_no_send. Exhausted buckets are skipped permanently.
-  7. On IDONTWANT: add sender to rl_no_send, pick next available peer in
-     that bucket, send new IHAVE.
-
-Parameters (from ctx.config):
-  k                : shards needed to decode
-  shard_size_bytes : size of each shard in bytes
-  rlnc_delay_ms    : simulated decode+recode delay (5ms)
-"""
-
 import random
 from typing import Generator, Optional
 
@@ -37,10 +10,6 @@ from network import ID_BITS, NUM_BUCKETS, _bucket_level
 # ---------------------------------------------------------------------------
 
 def _next_peer(node: int, block_id: int, bucket: int, ctx: SimContext) -> Optional[int]:
-    """
-    Return the next peer in the given bucket not in rl_no_send for this block.
-    Returns None if all peers in the bucket are exhausted.
-    """
     state    = ctx.states[(node, block_id)]
     no_send  = state.rl_no_send
     for peer in ctx.kad_tables[node][bucket]:
@@ -50,7 +19,6 @@ def _next_peer(node: int, block_id: int, bucket: int, ctx: SimContext) -> Option
 
 
 def _send_ihave(sender: int, receiver: int, block_id: int, ctx: SimContext) -> None:
-    """Spawn a send_message process for an IHAVE control message."""
     msg = Message(
         msg_type   = 'IHAVE',
         sender     = sender,
@@ -63,7 +31,6 @@ def _send_ihave(sender: int, receiver: int, block_id: int, ctx: SimContext) -> N
 
 
 def _send_reply(msg_type: str, sender: int, receiver: int, block_id: int, ctx: SimContext) -> None:
-    """Spawn a send_message process for IWANT or IDONTWANT control messages."""
     msg = Message(
         msg_type   = msg_type,
         sender     = sender,
@@ -76,10 +43,6 @@ def _send_reply(msg_type: str, sender: int, receiver: int, block_id: int, ctx: S
 
 
 def _publish(node: int, block_id: int, h: int, beta_rlnc: int, ctx: SimContext) -> None:
-    """
-    Send IHAVE to one peer per bucket across all levels, skipping rl_no_send
-    and empty/exhausted buckets.
-    """
     rng_local = random.Random(ctx.rng.integers(0, 2**32).item())
     for bucket in range(h):   # only sub-buckets 0 to h-1
         peers = [p for p in ctx.kad_tables[node][bucket] 
@@ -96,11 +59,6 @@ def _publish(node: int, block_id: int, h: int, beta_rlnc: int, ctx: SimContext) 
 # ---------------------------------------------------------------------------
 
 def handle_message(msg: Message, ctx: SimContext) -> Generator:
-    """
-    Protocol handler called by the engine on message delivery.
-
-    Handles: PUBLISH, IHAVE, IWANT, IDONTWANT, SHARD.
-    """
     k             = ctx.config['k']
     shard_size    = ctx.config['shard_size_bytes']
     rlnc_delay_ms = ctx.config['rlnc_delay_ms']

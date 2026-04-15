@@ -1,25 +1,3 @@
-"""
-optimump2p.py — OPTIMUMP2P broadcast protocol (simplified push-only variant).
-
-Algorithm summary (heartbeat and IHAVE/IWANT removed for simulation clarity):
-  1. Source generates k*p shards, sends k randomly selected shards to each
-     mesh peer (publisher flooding: sends to all N(v), not just Nmesh(v)).
-  2. Receiving node accumulates shards. All shards assumed innovative.
-     Drops shards if already decoded.
-  3. On receiving k shards: decoded. Sends k randomly selected shards to
-     each mesh peer not in op_is_done, excluding the sender of the
-     triggering shard. Sends IDONTWANT to all mesh peers.
-  4. On receiving IDONTWANT: adds sender to op_is_done.
-
-Forwarding threshold r = k (simplified from paper's r = k/2).
-No heartbeat or IHAVE/IWANT pull path in this simulation.
-
-Parameters (from ctx.config):
-  k                : shards needed to decode
-  p                : shard multiplier (total shards = k*p)
-  shard_size_bytes : size of each shard in bytes
-"""
-
 import random
 from typing import Generator
 
@@ -31,7 +9,6 @@ from simpy_engine import Message, SimContext, send_message
 # ---------------------------------------------------------------------------
 
 def _random_k_shards(k: int, p: int, rng_local: random.Random) -> list:
-    """Sample k shard indices from the k*p available shards."""
     return rng_local.sample(range(k * p), k)
 
 
@@ -43,7 +20,6 @@ def _send_shards(
     shard_size: int,
     ctx       : SimContext,
 ) -> None:
-    """Spawn individual send_message processes for each shard index."""
     for shard_idx in shard_idxs:
         msg = Message(
             msg_type   = 'SHARD',
@@ -58,7 +34,6 @@ def _send_shards(
 
 
 def _send_idontwant(sender: int, receiver: int, block_id: int, ctx: SimContext) -> None:
-    """Spawn a send_message process for an IDONTWANT control message."""
     msg = Message(
         msg_type   = 'IDONTWANT',
         sender     = sender,
@@ -75,11 +50,6 @@ def _send_idontwant(sender: int, receiver: int, block_id: int, ctx: SimContext) 
 # ---------------------------------------------------------------------------
 
 def handle_message(msg: Message, ctx: SimContext) -> Generator:
-    """
-    Protocol handler called by the engine on message delivery.
-
-    Handles: PUBLISH, SHARD, IDONTWANT.
-    """
     k          = ctx.config['k']
     p          = ctx.config['p']
     shard_size = ctx.config['shard_size_bytes']

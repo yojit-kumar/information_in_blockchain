@@ -4,13 +4,6 @@ metrics.py — In-memory metrics collection for broadcast protocol simulation.
 Two event types are recorded:
   - Delivery events: when a node successfully decodes a block.
   - Control message events: IHAVE, IWANT, IDONTWANT exchanges.
-
-Shard transmissions are intentionally not tracked here — bandwidth analysis
-is better derived from the control message counts and known shard sizes.
-
-All timestamps are absolute simulation time in milliseconds. To get
-per-block relative delivery times in Jupyter:
-    df['rel_time'] = df['time_ms'] - df.groupby('block_id')['time_ms'].transform('min')
 """
 
 import csv
@@ -45,18 +38,12 @@ class ControlEvent:
 
 @dataclass
 class MetricsCollector:
-    """
-    Accumulates delivery and control message events in memory during a
-    simulation run, then flushes to CSV at the end.
 
-    One instance per protocol per benchmark run.
-    """
     _deliveries : List[DeliveryEvent] = field(default_factory=list, repr=False)
     _controls   : List[ControlEvent]  = field(default_factory=list, repr=False)
     _shard_counts : dict = field(default_factory=dict)
 
     def record_delivery(self, block_id: int, node_id: int, time_ms: float) -> None:
-        """Record that node_id successfully decoded block_id at time_ms."""
         self._deliveries.append(DeliveryEvent(block_id, node_id, time_ms))
 
     def record_message(
@@ -67,18 +54,9 @@ class MetricsCollector:
         receiver : int,
         time_ms  : float,
     ) -> None:
-        """Record a control message exchange (IHAVE, IWANT, or IDONTWANT)."""
         self._controls.append(ControlEvent(block_id, msg_type, sender, receiver, time_ms))
 
     def flush(self, protocol: str, seed: int, results_dir: str, label: str = '') -> None:
-        """
-        Write accumulated events to two CSVs in results_dir:
-          {protocol}_{seed}_deliveries.csv  — block_id, node_id, time_ms
-          {protocol}_{seed}_messages.csv    — block_id, msg_type, sender, receiver, time_ms
-
-        Creates results_dir if it does not exist.
-        Clears in-memory buffers after writing.
-        """
         os.makedirs(results_dir, exist_ok=True)
 
         # Deliveries CSV

@@ -42,19 +42,6 @@ BUCKET_CAP = 10
 # ---------------------------------------------------------------------------
 
 def assign_node_ids(n: int, seed: int) -> dict:
-    """
-    Assign a unique random ID to each of the n nodes.
-
-    Parameters
-    ----------
-    n    : number of nodes
-    seed : RNG seed for reproducibility
-
-    Returns
-    -------
-    node_ids : dict[node_index -> 16-bit int]
-        e.g. {0: 52341, 1: 3892, ...}
-    """
     rng = random.Random(seed)
     all_ids = rng.sample(range(2**ID_BITS), n)  # sampling ensures uniqueness
     return {i: all_ids[i] for i in range(n)}
@@ -65,37 +52,10 @@ def assign_node_ids(n: int, seed: int) -> dict:
 # ---------------------------------------------------------------------------
 
 def _bucket_level(xor_dist: int) -> int:
-    """
-    Given an XOR distance, return the bucket index k such that
-    XOR distance falls in [2^k, 2^(k+1)).
-
-    XOR distance 0 (a node with itself) is not a valid routing entry
-    and should never be passed here.
-    """
     return xor_dist.bit_length() - 1
 
 
 def build_kademlia_tables(node_ids: dict, seed: int) -> dict:
-    """
-    Precompute the Kademlia routing table for every node.
- 
-    For each node u, bucket k contains up to BUCKET_CAP randomly sampled
-    nodes v such that:
-        2^k <= XOR(id[u], id[v]) < 2^(k+1)
- 
-    All candidates at each bucket level are first collected, then randomly
-    sampled down to BUCKET_CAP. The seed ensures reproducibility.
- 
-    Parameters
-    ----------
-    node_ids : dict[node_index -> 16-bit int]
-    seed     : RNG seed for reproducible bucket sampling
- 
-    Returns
-    -------
-    tables : dict[node_index -> list of 16 buckets]
-        tables[u][k] = list of up to BUCKET_CAP node indices at bucket level k from u.
-    """
     rng = random.Random(seed)
     nodes = list(node_ids.keys())
  
@@ -126,18 +86,6 @@ def build_kademlia_tables(node_ids: dict, seed: int) -> dict:
 # ---------------------------------------------------------------------------
 
 def assign_bandwidth_tiers(n: int, seed: int) -> dict:
-    """
-    Assign bandwidth tiers to nodes: 20% 'high', 80% 'low'.
-
-    Parameters
-    ----------
-    n    : number of nodes
-    seed : RNG seed for reproducibility
-
-    Returns
-    -------
-    tiers : dict[node_index -> 'high' or 'low']
-    """
     rng = random.Random(seed)
     n_high = max(1, int(0.2 * n))
     high_nodes = set(rng.sample(range(n), n_high))
@@ -149,19 +97,4 @@ def assign_bandwidth_tiers(n: int, seed: int) -> dict:
 # ---------------------------------------------------------------------------
 
 def sample_latency(rng: np.random.Generator) -> float:
-    """
-    Sample a one-way link latency in milliseconds from a LogNormal distribution.
-
-    Each call represents independent per-packet jitter — the same link
-    can have a different latency each time a packet traverses it.
-
-    Parameters
-    ----------
-    rng : numpy Generator (e.g. np.random.default_rng(seed))
-        Passed in from the simulation context for reproducibility.
-
-    Returns
-    -------
-    latency_ms : float
-    """
     return rng.lognormal(mean=_LATENCY_MU, sigma=_LATENCY_SIGMA)

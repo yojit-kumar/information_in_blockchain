@@ -14,7 +14,7 @@ Check that:
 """
 
 import sys, os
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Override benchmark config before importing main
 import benchmark
@@ -22,7 +22,7 @@ benchmark.N_NODES    = 50
 benchmark.N_SEEDS    = 1
 benchmark.N_BLOCKS   = 1
 benchmark.SEED_START = 0
-benchmark.RESULTS_DIR= 'results/smoke'
+benchmark.RESULTS_DIR= os.path.abspath(os.path.join(os.path.dirname(__file__), "../results/smoke"))
 benchmark.SOURCE_MODE= 'fixed'
 
 benchmark.main()
@@ -31,7 +31,7 @@ benchmark.main()
 import csv
 print("\n--- Delivery counts ---")
 for protocol in ['kadcast', 'kadrlnc', 'optimump2p']:
-    path = f"results/smoke/{protocol}_0_deliveries.csv"
+    path = f"{benchmark.RESULTS_DIR}/{protocol}_0_deliveries.csv"
     with open(path) as f:
         rows = list(csv.reader(f))
     print(f"  {protocol}: {len(rows)-1} nodes decoded (out of 50)")
