@@ -1,23 +1,9 @@
-"""
-benchmark_size.py — Variable block size benchmark.
-
-Tests how each protocol scales with payload size.
-K=32 is fixed; shard size scales with block size (shard_size = block_size // K).
-
-Sequential blocks per seed, fresh SimPy environment per block — identical
-structure to benchmark.py except BLOCK_SIZE and SHARD_SIZE vary.
-
-Output CSVs (one per protocol per seed per block size):
-  results/size/{protocol}_{seed}_{size_kb}kb_deliveries.csv
-  results/size/{protocol}_{seed}_{size_kb}kb_messages.csv
-"""
-
 import os
 import sys
 import random
 import numpy as np
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from simpy_engine import build_context, run_simulation, Message
 from metrics import MetricsCollector
@@ -55,8 +41,7 @@ N_BLOCKS   = 5
 SOURCE_MODE = 'random'   # 'fixed' or 'random'
 
 # --- Results ---
-RESULTS_DIR = os.path.join('results', 'size')
-
+RESULTS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../results/size"))
 
 # ===========================================================================
 # Build config dict for a given block size

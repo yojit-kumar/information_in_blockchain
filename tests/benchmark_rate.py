@@ -1,31 +1,10 @@
-"""
-benchmark_rate.py — Variable publish rate benchmark.
-
-Tests how each protocol performs under increasing message load.
-
-Design:
-  - Blocks are injected at a fixed rate λ (msg/s) for W + COOLDOWN seconds.
-  - Only blocks injected during the first W seconds are tracked in metrics.
-  - Cooldown injection keeps queues stressed, giving tracked blocks fair time.
-  - All blocks in one run share a single SimPy environment (real contention).
-
-Output CSVs (one per protocol per seed per rate):
-  results/rate/{protocol}_{seed}_{rate}_deliveries.csv
-    columns: block_id, node_id, time_ms, inject_time_ms
-  results/rate/{protocol}_{seed}_{rate}_messages.csv
-    columns: block_id, msg_type, sender, receiver, time_ms
-
-Analyse with Jupyter: compute per-block relative delivery times as:
-    df['rel_time'] = df['time_ms'] - df['inject_time_ms']
-"""
-
 import os
 import sys
 import random
 import numpy as np
 import simpy
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from simpy_engine import build_context, Message, SimContext, get_or_create_state
 from metrics import MetricsCollector
@@ -40,14 +19,14 @@ import protocols.optimump2p as optimump2p
 # --- Network ---
 N_NODES    = 1000
 SEED_START = 0
-N_SEEDS    = 2
+N_SEEDS    = 10
 
 # --- Timing ---
 W        = 2.0    # measurement window in seconds
 COOLDOWN = 1.0    # cooldown in seconds (injection continues, not tracked)
 
 # --- Publish rates to sweep (msg/s) ---
-PUBLISH_RATES = [1, 2, 4]#, 8, 16, 32]
+PUBLISH_RATES = [1, 2, 4, 8, 16, 32]
 
 # --- Shared protocol params ---
 K          = 32
@@ -73,17 +52,13 @@ CONFIG = {
 }
 
 # --- Results ---
-RESULTS_DIR = os.path.join('results', 'rate')
+RESULTS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../results/rate"))
 
 # ===========================================================================
 # Tracked metrics collector — wraps MetricsCollector to filter untracked blocks
 # ===========================================================================
 
 class RateMetricsCollector(MetricsCollector):
-    """
-    Extends MetricsCollector to only record events for tracked blocks.
-    Also stores inject_time_ms per block for relative time computation.
-    """
     def __init__(self):
         super().__init__()
         self.tracked_blocks  = set()   # block_ids injected during W
@@ -158,10 +133,7 @@ def inject_blocks(
     rng_src      : random.Random,
     block_counter: list,   # mutable counter [int]
 ):
-    """
-    SimPy process: inject one block every 1000/rate ms for total_ms.
-    Blocks injected before w_ms are tracked; after w_ms are not.
-    """
+
     interval_ms = 1000.0 / rate
 
     while env.now < total_ms:
@@ -188,7 +160,6 @@ def inject_blocks(
 
 
 def _deliver_publish(msg: Message, ctx: SimContext, handler) -> object:
-    """Thin wrapper to deliver the initial PUBLISH event."""
     get_or_create_state(msg.receiver, msg.block_id, ctx)
     yield from handler(msg, ctx)
 

@@ -1,23 +1,9 @@
-"""
-benchmark.py — Entry point for broadcast protocol simulation benchmarks.
-
-Runs Kadcast, KadRLNC, and OPTIMUMP2P over multiple seeds and blocks,
-writing raw per-node delivery timestamps and control message logs to results/.
-
-Usage:
-    python benchmark.py
-
-Results are written to results/ as CSVs, one per protocol per seed.
-Analyse with Jupyter notebooks.
-"""
-
 import random
 import sys
 import os
 import numpy as np
 
-# Make sure sim/ root is on the path when running from any directory.
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from simpy_engine import build_context, run_simulation, Message
 from metrics import MetricsCollector
@@ -59,13 +45,13 @@ D_MESH      = 4                    # mesh degree (peers per node)
 SOURCE_MODE = 'random'
 
 # --- Results ---
-RESULTS_DIR = 'results/base'
+RESULTS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../results/base"))
 
 # ===========================================================================
 # Derived config dicts passed into SimContext
 # ===========================================================================
 
-KADCAST_CONFIG = {
+CONFIG = {
     'k'               : K,
     'f'               : F,
     'beta'            : BETA,
@@ -77,40 +63,13 @@ KADCAST_CONFIG = {
     'r'               : K // 2,
 }
 
-KADRLNC_CONFIG = {
-    'k'               : K,
-    'f'               : F,
-    'beta'            : BETA,
-    'chunk_size_bytes': SHARD_SIZE,
-    'shard_size_bytes': SHARD_SIZE,
-    'p'               : P,
-    'rlnc_delay_ms'   : RLNC_DELAY,
-    'beta_rlnc'       : 2,
-    'r'               : K // 2,
-}
-
-OPTIMUMP2P_CONFIG = {
-    'k'               : K,
-    'f'               : F,
-    'beta'            : BETA,
-    'chunk_size_bytes': SHARD_SIZE,
-    'shard_size_bytes': SHARD_SIZE,
-    'p'               : P,
-    'rlnc_delay_ms'   : RLNC_DELAY,
-    'beta_rlnc'       : 2,
-    'r'               : K // 2,
-}
 
 # ===========================================================================
 # Source node selection
 # ===========================================================================
 
 def get_source_node(block_idx: int, seed: int, rng: random.Random) -> int:
-    """
-    Return the source node index for a given block.
-    'fixed'  → always node 0
-    'random' → random node drawn from rng (reproducible per seed)
-    """
+
     if SOURCE_MODE == 'fixed':
         return 0
     else:
@@ -127,20 +86,6 @@ def run_protocol(
     config        : dict,
     seed          : int,
 ) -> None:
-    """
-    Run one protocol for one seed over N_BLOCKS blocks.
-
-    Each block gets its own fresh SimPy environment and node states,
-    but reuses the same topology (node IDs, routing tables, bandwidth tiers,
-    mesh peers) built from the seed.
-
-    Parameters
-    ----------
-    protocol_name : string label used in CSV filenames
-    handler       : handle_message function from the protocol module
-    config        : parameter dict passed into SimContext
-    seed          : RNG seed for this run
-    """
     print(f"  [{protocol_name}] seed={seed} ...", end=' ', flush=True)
 
     metrics   = MetricsCollector()
@@ -194,9 +139,9 @@ def main():
     print(f"Results → {RESULTS_DIR}/\n")
 
     protocols = [
-        ('kadcast',    kadcast.handle_message,    KADCAST_CONFIG),
-        ('kadrlnc',    kadrlnc.handle_message,    KADRLNC_CONFIG),
-        ('optimump2p', optimump2p.handle_message, OPTIMUMP2P_CONFIG),
+        ('kadcast',    kadcast.handle_message,    CONFIG),
+        ('kadrlnc',    kadrlnc.handle_message,    CONFIG),
+        ('optimump2p', optimump2p.handle_message, CONFIG),
     ]
 
     for protocol_name, handler, config in protocols:
