@@ -1,0 +1,63 @@
+\begin{thebibliography}{10}
+
+\bibitem{decker2013}
+C.~Decker and R.~Wattenhofer.
+\newblock Information propagation in the bitcoin network.
+\newblock In {\em IEEE P2P 2013}, 2013.
+
+\bibitem{demers1987}
+A.~Demers et~al.
+\newblock Epidemic algorithms for replicated database maintenance.
+\newblock In {\em PODC}, 1987.
+
+\bibitem{eyal2013}
+I.~Eyal and E.~G. Sirer.
+\newblock Majority is not enough: {Bitcoin} mining is vulnerable, 2013.
+
+\bibitem{haeupler2010}
+B.~Haeupler.
+\newblock Analyzing network coding gossip made easy.
+\newblock In {\em STOC}, 2010.
+
+\bibitem{ho2006}
+T.~Ho et~al.
+\newblock A random linear network coding approach to multicast.
+\newblock {\em IEEE Transactions on Information Theory}, 52(10), 2006.
+
+\bibitem{lai2025}
+Y.~Lai et~al.
+\newblock Accelerating block and transaction propagation: A survey on broadcast protocols in blockchain networks.
+\newblock {\em IEEE Transactions on Network Science and Engineering}, 2025.
+
+\bibitem{li2021}
+W.~Li et~al.
+\newblock A scalable multi-layer {PBFT} consensus for blockchain.
+\newblock {\em IEEE Transactions on Parallel and Distributed Systems}, 32(5), 2021.
+
+\bibitem{liao2024}
+J.~Liao et~al.
+\newblock Graph attention network-based block propagation with optimal {AoI} and reputation in {Web 3.0}, 2024.
+
+\bibitem{lin2022}
+Y.~Lin et~al.
+\newblock A unified blockchain-semantic framework for wireless edge intelligence enabled {Web 3.0}, 2022.
+
+\bibitem{maymounkov2002}
+P.~Maymounkov and D.~Mazieres.
+\newblock Kademlia: A peer-to-peer information system based on the {XOR} metric.
+\newblock In {\em IPTPS}, 2002.
+
+\bibitem{nakamoto2008}
+S.~Nakamoto.
+\newblock Bitcoin: A peer-to-peer electronic cash system, 2008.
+
+\bibitem{optimump2p2025}
+N.~Nicolaou et~al.
+\newblock {OPTIMUMP2P}: Fast and reliable gossiping in {P2P} networks, 2025.
+
+\bibitem{kadcast2019}
+E.~Rohrer and F.~Tschorsch.
+\newblock Kadcast: A structured approach to broadcast in blockchain networks.
+\newblock In {\em ACM AFT}, 2019.
+
+\end{thebibliography}
